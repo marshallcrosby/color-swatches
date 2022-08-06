@@ -1,5 +1,5 @@
 /*!
-    * Color Swatches v1.0.0
+    * Color Swatches v1.0.1
     * Plugin that makes it easy to render color swatches.
     *
     * Copyright 2021-2022 Marshall Crosby
@@ -122,10 +122,12 @@
                 <span class="color-swatch__code color-swatch__code--var"></span>
                 <span class="color-swatch__copy-bubble">Copy</span>
             </div>
+            <!--
             <div class="color-swatch__copy-btn" role="button">
                 <span class="color-swatch__hsl"></span>
                 <span class="color-swatch__copy-bubble">Copy</span>
             </div>
+            -->
         </div>
     `;
 
@@ -231,7 +233,7 @@
 
         .color-swatch__copy-btn:active .color-swatch__value:after,
         .color-swatch__copy-btn:active .color-swatch__copy-bubble {
-            opacity: 0;
+            opacity: .75;
         }
 
         .color-swatch__code--hex,
@@ -271,7 +273,7 @@
 
         hexEl.innerHTML = '<span class="color-swatch__type">hex:</span> <span class="color-swatch__value">' + rgbaToHex(bgColor).toUpperCase() + '</span>';
         rgbEl.innerHTML = '<span class="color-swatch__type">rgb:</span> <span class="color-swatch__value">' + bgColor + '</span>';
-        hslEl.innerHTML = '<span class="color-swatch__type">hsl:</span> <span class="color-swatch__value">' + rgbaToHsla(bgColor) + '</span>';
+        // hslEl.innerHTML = '<span class="color-swatch__type">hsl:</span> <span class="color-swatch__value">' + rgbaToHsla(bgColor) + '</span>';
         
         if (varValue !== null) {
             varEl.innerHTML = '<span class="color-swatch__type">var:</span> <span class="color-swatch__value">' + varValue + '</span>';
