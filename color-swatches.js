@@ -1,10 +1,18 @@
 /*!
-    * Color Swatches v1.0.1
+    * Color Swatches v1.0.2
     * Plugin that makes it easy to render color swatches.
     *
     * Copyright 2021-2022 Marshall Crosby
     * https://marshallcrosby.com
 */
+
+/* -----------------------------------------------------------------------------
+    TODOS:
+    ✓ Allow inline css background-color
+    ✓ Allow color class
+    • Setup gulp
+    • Display hsl(a) in a good way when it's too long
+----------------------------------------------------------------------------- */
 
 (function () {
     "use strict"
@@ -145,10 +153,15 @@
         }
 
         .color-swatch {
-            border-radius: var(--cs-border-radius);
+            border-top-left-radius: var(--cs-border-radius);
+            border-top-right-radius: var(--cs-border-radius);
+            border-bottom-left-radius: calc(var(--cs-border-radius) + 10px);
+            border-bottom-right-radius: calc(var(--cs-border-radius) + 10px);
             box-shadow: 0 15px 80px 0 rgba(0, 0, 0, 0.12);
             flex: 1 1 0;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .color-swatch__color {
@@ -164,6 +177,10 @@
             font-family: sans-serif;
             display: flex;
             flex-direction: column;
+            background-color: #fff;
+            border-bottom-left-radius: var(--cs-border-radius);
+            border-bottom-right-radius: var(--cs-border-radius);
+            flex: 1;
         }
 
         .color-swatch__copy-btn {
@@ -190,10 +207,15 @@
             width: calc(100% + 18px);
             height: 25px;
             background: #eee;
-            z-index: -1;
+            z-index: 0;
             border-radius: 20px;
             opacity: 0;
             transition: opacity 100ms linear;
+        }
+
+        .color-swatch__value__text {
+            position: relative;
+            z-index: 1;
         }
 
         .color-swatch__copy-bubble {
@@ -246,6 +268,7 @@
         .color-swatch__type {
             font-weight: normal;
             margin-right: 5px;
+            min-width: 21px;
         }
     `;
 
@@ -265,18 +288,38 @@
         const varEl = swatchEl.querySelector('.color-swatch__code--var');
         const rgbEl = swatchEl.querySelector('.color-swatch__code--rgb');
         const hslEl = swatchEl.querySelector('.color-swatch__hsl');
+        const currentBgColor = getComputedStyle(swatchEl).backgroundColor;
         
-        colorEl.style.backgroundColor = swatchEl.getAttribute('data-swatch-color');
+        colorEl.style.backgroundColor = (swatchEl.getAttribute('data-swatch-color') === '') ? currentBgColor.toString() : swatchEl.getAttribute('data-swatch-color');
         
         const bgColor = getComputedStyle(colorEl).backgroundColor;
         const varValue = (colorEl.style.getPropertyValue('background-color').toString().includes('var(--')) ? colorEl.style.getPropertyValue('background-color').toString().replace(/var\(|\)/g, '') : null;
 
-        hexEl.innerHTML = '<span class="color-swatch__type">hex:</span> <span class="color-swatch__value">' + rgbaToHex(bgColor).toUpperCase() + '</span>';
-        rgbEl.innerHTML = '<span class="color-swatch__type">rgb:</span> <span class="color-swatch__value">' + bgColor + '</span>';
-        // hslEl.innerHTML = '<span class="color-swatch__type">hsl:</span> <span class="color-swatch__value">' + rgbaToHsla(bgColor) + '</span>';
+        hexEl.innerHTML = `
+            <span class="color-swatch__type">hex:</span>
+            <span class="color-swatch__value">
+                <span class="color-swatch__value__text">
+                    ${rgbaToHex(bgColor).toUpperCase()}
+                </span>
+            </span>
+        `;
+        
+        rgbEl.innerHTML = `
+            <span class="color-swatch__type">rgb:</span>
+            <span class="color-swatch__value">
+                <span class="color-swatch__value__text">${bgColor}</span>
+            </span>
+        `;
+        
+        // hslEl.innerHTML = `<span class="color-swatch__type">hsl:</span> <span class="color-swatch__value">${rgbaToHsla(bgColor)}</span>`;
         
         if (varValue !== null) {
-            varEl.innerHTML = '<span class="color-swatch__type">var:</span> <span class="color-swatch__value">' + varValue + '</span>';
+            varEl.innerHTML = `
+                <span class="color-swatch__type">var:</span>
+                <span class="color-swatch__value">
+                    <span class="color-swatch__value__text">${varValue}</span>
+                </span>
+            `;
         } else {
             varEl.closest('.color-swatch__copy-btn').remove();
         }

@@ -7,3 +7,7 @@
     --color-primary: orange;
     --color-600: teal;
 }
+
+.bg-red {
+    background-color: red;
+}
