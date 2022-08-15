@@ -1,5 +1,5 @@
 /*!
-    * Color Swatches v1.0.2
+    * Color Swatches v1.0.3
     * Plugin that makes it easy to render color swatches.
     *
     * Copyright 2021-2022 Marshall Crosby
@@ -235,6 +235,7 @@
             box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
             opacity: 0;
             transition: opacity 100ms linear;
+            z-index: 1;
         }
 
         .color-swatch__copy-bubble:after {
