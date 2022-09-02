@@ -18,138 +18,35 @@
     "use strict"
     
     // Convert rgb(a) to hex
-    const rgbaToHex = (rgba) => `#${rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1).map((n, i) => (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, '0').replace('NaN', '')).join('')}`
+    const rgbaToHex = (rgba) => `#${rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1).map((n, i) => (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, '0').replace('NaN', '')).join('')}`;
 
-    /*
-        Convert rgb(a) to hsl(a)
-        With help from https://css-tricks.com/converting-color-spaces-in-javascript/
-    */
-
-    function rgbaToHsla(rgbaArg) {
-        let rgba = rgbaArg.replace(/[^\d,.]/g, '').split(',');
-        
-        for (let R in rgba) {
-            let r = rgba[R];
-            
-            if (r.indexOf('%') > -1) {
-                let p = r.substr(0, r.length - 1) / 100;
-                
-                if (R < 3) {
-                    rgba[R] = Math.round(p * 255);
-                } else {
-                    rgba[R] = p;
-                }
-            }
-        }
-
-        // Make r, g, and b fractions of 1
-        let r = rgba[0] / 255;
-        let g = rgba[1] / 255;
-        let b = rgba[2] / 255;
-        let a = rgba[3];
-
-        // Find greatest and smallest channel values
-        let cmin = Math.min(r,g,b);
-        let cmax = Math.max(r,g,b);
-        let delta = cmax - cmin;
-        let h = 0;
-        let s = 0;
-        let l = 0;
-
-        //
-        // Calculate hue
-        //
-        
-        // No difference
-        if (delta === 0) {
-            h = 0;
-        } else if (cmax === r) {
-            
-            // Red is max
-            h = ((g - b) / delta) % 6;
-        } else if (cmax === g) {
-            
-            // Green is max
-            h = (b - r) / delta + 2;
-        } else {
-
-            // Blue is max
-            h = (r - g) / delta + 4;
-        }
-        
-        h = Math.round(h * 60);
-            
-        // Make negative hues positive behind 360°
-        if (h < 0) {
-            h += 360;
-        }
-
-        //
-        // Calculate lightness
-        //
-
-        l = (cmax + cmin) / 2;
-
-        //
-        // Calculate saturation
-        //
-
-        s = (delta === 0) ? 0 : delta / (1 - Math.abs(2 * l - 1));
-
-        // Multiply l and s by 100 to make percentage value
-        s = +(s * 100).toFixed(1);
-        l = +(l * 100).toFixed(1);
-
-        if (a !== undefined) {
-            return 'hsla(' + h + ', ' + s + '%, ' +l + '%, ' + a + ')';
-        } else {
-            return 'hsl(' + h + ', ' + s + '%, ' +l + '%)';
-        }
+    function htmlToElement(html) {
+        var template = document.createElement('template');
+        html = html.trim(); // Never return a text node of whitespace as the result
+        template.innerHTML = html;
+        return template.content.firstChild;
     }
-
-    const copyIconSvg = /* html */`
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <path d="M384 96L384 0h-112c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48H464c26.51 0 48-21.49 48-48V128h-95.1C398.4 128 384 113.6 384 96zM416 0v96h96L416 0zM192 352V128h-144c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h192c26.51 0 48-21.49 48-48L288 416h-32C220.7 416 192 387.3 192 352z"/>
-        </svg>
-    `;
-
                     
-    // Swatch component markup
-    const swatchInnerEls = /* html */`
-        <div class="color-swatch__color"></div>
-        <div class="color-swatch__info">
-            <div class="color-swatch__copy-btn" role="button" tabindex="0">
-                <span class="color-swatch__code color-swatch__code--hex"></span>
-                <span class="color-swatch__copy-bubble">Copy</span>
-            </div>
-            <div class="color-swatch__copy-btn" role="button" tabindex="0">
-                <span class="color-swatch__code color-swatch__code--rgb"></span>
-                <span class="color-swatch__copy-bubble">Copy</span>
-            </div>
-            <div class="color-swatch__copy-btn" role="button" tabindex="0">
-                <span class="color-swatch__code color-swatch__code--var"></span>
-                <span class="color-swatch__copy-bubble">Copy</span>
-            </div>
-            <!--
-            <div class="color-swatch__copy-btn" role="button">
-                <span class="color-swatch__hsl"></span>
-                <span class="color-swatch__copy-bubble">Copy</span>
-            </div>
-            -->
-        </div>
-    `;
-
     // Swatch CSS
     const swatchStyles = /* css */`
         :root {
             --cs-color-body: #1e2125;
+            --cs-gray-100: #eee;
+            --cs-gray-200: #e2e2e2;
             --cs-border-radius: 18px;
+            --cs-gutter: 12px;
+            --cs-font-size: 11px;
+            --cs-box-shadow: 0 15px 80px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .color-swatch * {
+            box-sizing: border-box;
         }
 
         .color-swatches:not(.row) {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: var(--cs-gutter);
         }
 
         .color-swatch {
@@ -157,7 +54,7 @@
             border-top-right-radius: var(--cs-border-radius);
             border-bottom-left-radius: calc(var(--cs-border-radius) + 10px);
             border-bottom-right-radius: calc(var(--cs-border-radius) + 10px);
-            box-shadow: 0 15px 80px 0 rgba(0, 0, 0, 0.12);
+            box-shadow: var(--cs-box-shadow);
             flex: 1 1 0;
             height: 100%;
             display: flex;
@@ -171,8 +68,8 @@
         }
 
         .color-swatch__info {
-            padding: 8px 5px;
-            font-size: 11px;
+            padding: 8px 5px 14px 5px;
+            font-size: var(--cs-font-size);
             font-weight: 700;
             font-family: sans-serif;
             display: flex;
@@ -189,28 +86,18 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            padding: 0 10px;
-            border-radius: 20px;
+            margin: 0 10px;
             white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .color-swatch__copy-btn:hover {
+            overflow: visible;
         }
 
         .color-swatch__value  {
             position: relative;
             margin-left: 5px;
-        }
-
-        .color-swatch__value:after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -9px;
-            width: calc(100% + 18px);
-            height: 25px;
-            background: #eee;
-            z-index: 0;
-            border-radius: 20px;
-            opacity: 0;
-            transition: opacity 100ms linear;
         }
 
         .color-swatch__value__text {
@@ -234,7 +121,6 @@
             position: relative;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, .2);
             opacity: 0;
-            transition: opacity 100ms linear;
             z-index: 1;
         }
 
@@ -249,12 +135,14 @@
             border-color: transparent var(--cs-color-body) transparent transparent;
         }
 
-        .color-swatch__copy-btn:hover .color-swatch__value:after,
+        .color-swatch__copy-btn:hover .color-swatch__value {
+            text-decoration: underline;
+        }
+
         .color-swatch__copy-btn:hover .color-swatch__copy-bubble {
             opacity: 1;
         }
 
-        .color-swatch__copy-btn:active .color-swatch__value:after,
         .color-swatch__copy-btn:active .color-swatch__copy-bubble {
             opacity: .75;
         }
@@ -271,6 +159,10 @@
             margin-right: 5px;
             min-width: 21px;
         }
+
+        .color-swatch__color-stops {
+            margin-left: 10px;
+        }
     `;
 
     // Add styles to head
@@ -279,69 +171,193 @@
     swatchStyleTag.textContent = swatchStyles;
     document.head.appendChild(swatchStyleTag);
 
-    // Render swatch elements
-    document.querySelectorAll('[data-swatch-color]').forEach(swatchEl => {
-        swatchEl.classList.add('color-swatch');
-        swatchEl.innerHTML = swatchInnerEls;
+    // Swatch component markup
+    const swatchInnerEls = /* html */`
+        <div class="color-swatch__color"></div>
+        <div class="color-swatch__info">
+            <div class="color-swatch__copy-btn" role="button" tabindex="0">
+                <span class="color-swatch__code color-swatch__code--hex"></span>
+                <span class="color-swatch__copy-bubble">Copy</span>
+            </div>
+            <div class="color-swatch__copy-btn" role="button" tabindex="0">
+                <span class="color-swatch__code color-swatch__code--rgb"></span>
+                <span class="color-swatch__copy-bubble">Copy</span>
+            </div>
+            <div class="color-swatch__copy-btn" role="button" tabindex="0">
+                <span class="color-swatch__code color-swatch__code--var"></span>
+                <span class="color-swatch__copy-bubble">Copy</span>
+            </div>
+        </div>
+    `;
 
-        const colorEl = swatchEl.querySelector('.color-swatch__color');
-        const hexEl = swatchEl.querySelector('.color-swatch__code--hex');
-        const varEl = swatchEl.querySelector('.color-swatch__code--var');
-        const rgbEl = swatchEl.querySelector('.color-swatch__code--rgb');
-        const hslEl = swatchEl.querySelector('.color-swatch__hsl');
-        const currentBgColor = getComputedStyle(swatchEl).backgroundColor;
-        
-        colorEl.style.backgroundColor = (swatchEl.getAttribute('data-swatch-color') === '') ? currentBgColor.toString() : swatchEl.getAttribute('data-swatch-color');
-        
-        const bgColor = getComputedStyle(colorEl).backgroundColor;
-        const varValue = (colorEl.style.getPropertyValue('background-color').toString().includes('var(--')) ? colorEl.style.getPropertyValue('background-color').toString().replace(/var\(|\)/g, '') : null;
+    function renderSwatches () {
 
-        hexEl.innerHTML = `
-            <span class="color-swatch__type">hex:</span>
-            <span class="color-swatch__value">
-                <span class="color-swatch__value__text">
-                    ${rgbaToHex(bgColor).toUpperCase()}
-                </span>
-            </span>
-        `;
-        
-        rgbEl.innerHTML = `
-            <span class="color-swatch__type">rgb:</span>
-            <span class="color-swatch__value">
-                <span class="color-swatch__value__text">${bgColor}</span>
-            </span>
-        `;
-        
-        // hslEl.innerHTML = `<span class="color-swatch__type">hsl:</span> <span class="color-swatch__value">${rgbaToHsla(bgColor)}</span>`;
-        
-        if (varValue !== null) {
-            varEl.innerHTML = `
-                <span class="color-swatch__type">var:</span>
+        // Render swatch elements
+        document.querySelectorAll('[data-swatch-color]').forEach(swatchEl => {
+            swatchEl.classList.add('color-swatch');
+            swatchEl.innerHTML = swatchInnerEls;
+            
+            const colorEl = swatchEl.querySelector('.color-swatch__color');
+            const hexEl = swatchEl.querySelector('.color-swatch__code--hex');
+            const varEl = swatchEl.querySelector('.color-swatch__code--var');
+            const rgbEl = swatchEl.querySelector('.color-swatch__code--rgb');
+            const hslEl = swatchEl.querySelector('.color-swatch__hsl');
+            const currentBgColor = getComputedStyle(swatchEl).backgroundColor;        
+    
+            colorEl.style.backgroundColor = (swatchEl.getAttribute('data-swatch-color') === '') ? currentBgColor.toString() : swatchEl.getAttribute('data-swatch-color');
+    
+            const bgColor = getComputedStyle(colorEl).backgroundColor;
+            const varValue = (colorEl.style.getPropertyValue('background-color').toString().includes('var(--')) ? colorEl.style.getPropertyValue('background-color').toString().replace(/var\(|\)/g, '') : null;
+    
+            hexEl.innerHTML =  /* html */`
+                <span class="color-swatch__type">hex:</span>
                 <span class="color-swatch__value">
-                    <span class="color-swatch__value__text">${varValue}</span>
+                    <span class="color-swatch__value__text">
+                        ${rgbaToHex(bgColor).toUpperCase()}
+                    </span>
                 </span>
             `;
-        } else {
-            varEl.closest('.color-swatch__copy-btn').remove();
-        }
-    });
-
-    // Copy button
-    const copyButton = document.querySelectorAll('.color-swatch__copy-btn');
-    copyButton.forEach((item) => {
-        item.addEventListener('click', function () {
-            navigator.clipboard.writeText(item.querySelector('.color-swatch__value').innerText);
-            item.querySelector('.color-swatch__copy-bubble').innerText = 'Copied';
-        });
-
-        item.addEventListener('mouseout', function () {
-            let itemBubble = item.querySelector('.color-swatch__copy-bubble');
-            let itemBubbleText = itemBubble.innerText.toLowerCase();
-            if (itemBubbleText.includes('copied')) {
-                setTimeout(function () {
-                    itemBubble.innerText = 'Copy';
-                }, 100);
+            
+            rgbEl.innerHTML =  /* html */`
+                <span class="color-swatch__type">rgb:</span>
+                <span class="color-swatch__value">
+                    <span class="color-swatch__value__text">${bgColor}</span>
+                </span>
+            `;
+            
+            // hslEl.innerHTML = `<span class="color-swatch__type">hsl:</span> <span class="color-swatch__value">${rgbaToHsla(bgColor)}</span>`;
+            
+            if (varValue !== null) {
+                varEl.innerHTML =  /* html */`
+                    <span class="color-swatch__type">var:</span>
+                    <span class="color-swatch__value">
+                        <span class="color-swatch__value__text">${varValue}</span>
+                    </span>
+                `;
+            } else {
+                varEl.closest('.color-swatch__copy-btn').remove();
+            }
+    
+            // Parse gradient settings
+            colorEl.style.backgroundImage = (swatchEl.getAttribute('data-swatch-color') === '') ? getComputedStyle(swatchEl).backgroundImage.toString() : swatchEl.getAttribute('data-swatch-color');
+            const cssBgGradient = getComputedStyle(colorEl).backgroundImage;
+            const gradientVarValue = (colorEl.style.getPropertyValue('background-image').toString().includes('var(--')) ? colorEl.style.getPropertyValue('background-image').toString().replace(/var\(|\)/g, '') : null;
+            let cssGradientArray = null;    
+            
+            
+            if (cssBgGradient.toString().includes('linear-gradient') || cssBgGradient.toString().includes('radial-gradient') || cssGradientArray !== null) {
+                
+                const colorInfo = swatchEl.querySelector('.color-swatch__info');
+                
+                // Clear info
+                colorInfo.innerHTML = '';
+    
+                const emptyEntryEl = /* html */`
+                    <div class="color-swatch__copy-btn" role="button" tabindex="0">
+                        <span class="color-swatch__code">
+                            <span class="color-swatch__type"></span>
+                            <span class="color-swatch__value">
+                                <span class="color-swatch__value__text">
+                                </span>
+                            </span>
+                        </span>
+                        <span class="color-swatch__copy-bubble">Copy</span>
+                    </div>
+                `;
+    
+                const gradientObject = GradientParser.parse(cssBgGradient);
+                for (let i = 0, len = gradientObject.length; i < len; ++i) {
+                    let gradType = gradientObject[i].type;
+                    
+                    const gradTypeEntry = htmlToElement(emptyEntryEl);
+                    gradTypeEntry.querySelector('.color-swatch__type').innerText = 'type:';
+                    gradTypeEntry.querySelector('.color-swatch__value__text').innerText = gradType;
+                    colorInfo.appendChild(gradTypeEntry);
+    
+                    console.log(gradType);
+    
+                    let grad = gradientObject[i];
+    
+                    if (grad.colorStops.length) {
+                        const gradColorStopsEntryHtml = /* html */`
+                            <div class="color-swatch__color-stops">
+                                <div class="color-swatch__type">color stops:</div>
+                                <div class="color-swatch__color-stops__entries">
+                                </div>
+                            </div>
+                        `;
+        
+                        const gradStopEntry = htmlToElement(gradColorStopsEntryHtml);
+                        // gradStopEntry.querySelector('.color-swatch__value__text').innerText = colorStopValue;
+                        colorInfo.appendChild(gradStopEntry);
+    
+                        for (let i = 0, len = grad.colorStops.length; i < len; ++i) {
+                            let stop = grad.colorStops[i];
+                            
+                            let colorFull = '';
+                            if (stop.type === 'rgb') {
+                                colorFull = rgbaToHex(`rgb(${stop.value})`);
+                            }
+                            
+                            if (stop.type === 'rgba') {
+                                colorFull = `rgba(${stop.value.toString().replace(/,/g, ', ')})`;
+                            }
+                            
+                            if (stop.type === 'hex') {
+                                colorFull = rgbaToHex(`#${stop.value}`);
+                            }
+        
+                            let stopFull = '';
+                            if (stop.length !== undefined) {
+                                stopFull = ` ${stop.length.value}${stop.length.type}`
+                            }
+        
+                            const colorStopValue = `${colorFull}${stopFull}`;
+                            const gradColorStopEntry = htmlToElement(emptyEntryEl);
+        
+                            gradColorStopEntry.querySelector('.color-swatch__type').innerText = (i + 1) + '.';
+                            gradColorStopEntry.querySelector('.color-swatch__value__text').innerText = colorStopValue;
+                            colorInfo.querySelector('.color-swatch__color-stops__entries').appendChild(gradColorStopEntry);
+                        }
+                    }
+                }
+    
+                if (gradientVarValue !== null) {
+                    const gradientVarEntry = htmlToElement(emptyEntryEl);
+                    gradientVarEntry.querySelector('.color-swatch__type').innerText = `var:`;
+                    gradientVarEntry.querySelector('.color-swatch__value__text').innerText = `${gradientVarValue}`;
+                    colorInfo.appendChild(gradientVarEntry);
+                }
             }
         });
-    });
+    
+        // Copy button
+        const copyButton = document.querySelectorAll('.color-swatch__copy-btn');
+        copyButton.forEach((item) => {
+            item.addEventListener('click', function () {
+                navigator.clipboard.writeText(item.querySelector('.color-swatch__value').innerText);
+                item.querySelector('.color-swatch__copy-bubble').innerText = 'Copied';
+            });
+    
+            item.addEventListener('mouseout', function () {
+                let itemBubble = item.querySelector('.color-swatch__copy-bubble');
+                let itemBubbleText = itemBubble.innerText.toLowerCase();
+                if (itemBubbleText.includes('copied')) {
+                    setTimeout(function () {
+                        itemBubble.innerText = 'Copy';
+                    }, 100);
+                }
+            });
+        });
+    }
+
+    // Thanks to gradient-parser.js. Project repo: https://github.com/rafaelcaricio/gradient-parser
+    const gradientParserScript = `https://cdn.jsdelivr.net/npm/gradient-parser@1.0.2/build/web.js`;
+    const scriptEl = document.createElement('script');
+    scriptEl.src = gradientParserScript;
+    document.head.appendChild(scriptEl);
+    scriptEl.onload = function () {
+        renderSwatches();
+    };
+
 })();
