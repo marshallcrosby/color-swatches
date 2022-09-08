@@ -9,34 +9,29 @@
     <link rel="stylesheet" href="test-css/test-style.css">
 </head>
 <body>
-    <div class="container container--outer">
-        <div data-jtn-anchor="title: Blues" id="colorBlues">
-            <h3 class="h6">Blues</h3>
-        </div>
+    <div class="container">
+        <br>
+        <br>
+        <h1 class="h6">Color swatches</h1>
         <div class="row">
             <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch bg-red" data-swatch-color></div>
+                <div class="color-swatch bg-red" data-swatch-color data-view-markup="title: Using color class; btn-x: 10px; btn-y: 10px"></div>
             </div>
             <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch bg-gradient-test" data-swatch-color="var(--color-gradient)"></div>
+                <div class="color-swatch bg-gradient-test" data-swatch-color data-view-markup="title: Using gradient class; btn-x: 10px; btn-y: 10px"></div>
             </div>
             <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch" data-swatch-color="var(--color-150)"></div>
+                <div class="color-swatch" data-swatch-color="var(--test-gradient-radial)" data-view-markup="title: Using css variable (background gradient); btn-x: 10px; btn-y: 10px"></div>
             </div>
             <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch" data-swatch-color="var(--color-200)"></div>
+                <div class="color-swatch" data-swatch-color="var(--color-200)" data-view-markup="title: Using css variable (background color); btn-x: 10px; btn-y: 10px"></div>
             </div>
             <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch" data-swatch-color="var(--color-450)"></div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch" data-swatch-color="var(--color-primary)"></div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-                <div class="color-swatch" data-swatch-color="var(--color-600)"></div>
+                <div class="color-swatch" style="background-color: #663399" data-swatch-color data-view-markup="title: Using inline-style (background color); btn-x: 10px; btn-y: 10px"></div>
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/gh/marshallcrosby/view-markup@1.3.3/dist/js/view-markup.min.js?modal-nav&dynamic-pos"></script>
     <script src="js/color-swatches.js"></script>
 </body>
 </html>

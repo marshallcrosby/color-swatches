@@ -557,7 +557,7 @@ GradientParser.stringify = (function() {
     if (param.css !== 'external') {         
         // Swatch CSS. Import from css file via gulp
         const swatchStyles = `
-            :root{--cs-color-body:#1e2125;--cs-gray-100:#eee;--cs-gray-200:#e2e2e2;--cs-border-radius:18px;--cs-gutter:12px;--cs-font-size:11px;--cs-box-shadow-deep:0 15px 80px 0 rgba(0, 0, 0, 0.12);--cs-box-shadow-shallow:2px 2px 10px rgba(0, 0, 0, .2)}.color-swatch *{box-sizing:border-box}.color-swatches:not(.row){display:flex;flex-wrap:wrap;gap:var(--cs-gutter)}.color-swatch{border-top-left-radius:var(--cs-border-radius);border-top-right-radius:var(--cs-border-radius);border-bottom-left-radius:calc(var(--cs-border-radius) + 10px);border-bottom-right-radius:calc(var(--cs-border-radius) + 10px);box-shadow:var(--cs-box-shadow-deep);flex:1 1 0;height:100%;display:flex;flex-direction:column}.color-swatch__color{aspect-ratio:1/1;border-top-left-radius:var(--cs-border-radius);border-top-right-radius:var(--cs-border-radius)}.color-swatch__info{padding:8px 5px 14px 5px;font-size:var(--cs-font-size);font-weight:700;font-family:sans-serif;display:flex;flex-direction:column;background-color:#fff;border-bottom-left-radius:var(--cs-border-radius);border-bottom-right-radius:var(--cs-border-radius);flex:1}.color-swatch__copy-btn{border:0;background:0 0;cursor:pointer;display:inline-flex;align-items:center;margin:0 10px;white-space:nowrap;overflow:hidden}.color-swatch__copy-btn:hover{overflow:visible}.color-swatch__copy-btn:hover .color-swatch__value{text-decoration:underline}.color-swatch__copy-btn:hover .color-swatch__copy-bubble{opacity:1}.color-swatch__copy-btn:active .color-swatch__copy-bubble{opacity:.75}.color-swatch__value{position:relative;margin-left:5px}.color-swatch__value__text{position:relative;z-index:1}.color-swatch__copy-bubble{display:inline-flex;height:20px;background:var(--cs-color-body);color:#fff;text-transform:uppercase;font-size:9px;padding:3px 12px;border-radius:20px;justify-content:center;align-items:center;line-height:0;margin-left:15px;position:relative;box-shadow:var(--cs-box-shadow-shallow);opacity:0;z-index:1}.color-swatch__copy-bubble:after{position:absolute;right:calc(100% - 1px);content:"";width:0;height:0;border-style:solid;border-width:4px 6.9px 4px 0;border-color:transparent var(--cs-color-body) transparent transparent}.color-swatch__code{display:flex;position:relative}.color-swatch__type{font-weight:400;margin-right:5px;min-width:21px}.color-swatch__color-stops{margin-left:10px}
+            :root{--cs-color-body:#1e2125;--cs-gray-100:#eee;--cs-gray-200:#e2e2e2;--cs-border-radius:18px;--cs-gutter:12px;--cs-font-size:11px;--cs-box-shadow-deep:0 15px 80px 0 rgba(0, 0, 0, 0.12);--cs-box-shadow-shallow:2px 2px 10px rgba(0, 0, 0, .2)}.color-swatch *{box-sizing:border-box}.color-swatches:not(.row){display:flex;flex-wrap:wrap;gap:var(--cs-gutter)}.color-swatch{border-top-left-radius:var(--cs-border-radius);border-top-right-radius:var(--cs-border-radius);border-bottom-left-radius:calc(var(--cs-border-radius) + 10px);border-bottom-right-radius:calc(var(--cs-border-radius) + 10px);box-shadow:var(--cs-box-shadow-deep);flex:1 1 0;height:100%;display:flex;flex-direction:column;color:var(--cs-color-body)}.color-swatch__color{aspect-ratio:1/1;border-top-left-radius:var(--cs-border-radius);border-top-right-radius:var(--cs-border-radius)}.color-swatch__info{padding:8px 5px 14px 5px;font-size:var(--cs-font-size);font-weight:700;font-family:sans-serif;display:flex;flex-direction:column;background-color:#fff;border-bottom-left-radius:var(--cs-border-radius);border-bottom-right-radius:var(--cs-border-radius);flex:1}.color-swatch__copy-btn{border:0;background:0 0;cursor:pointer;display:inline-flex;align-items:center;margin:0 10px;white-space:nowrap;overflow:hidden;width:calc(100% - 5px);position:relative;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 15px),transparent 100%);mask-image:linear-gradient(to right,#000 calc(100% - 15px),transparent 100%)}.color-swatch__copy-btn:hover{overflow:visible;-webkit-mask-image:none;mask-image:none}.color-swatch__copy-btn:hover .color-swatch__value:after{opacity:1}.color-swatch__copy-btn:hover .color-swatch__copy-bubble{opacity:1}.color-swatch__copy-btn:active .color-swatch__copy-bubble{opacity:.75}.color-swatch__value{position:relative;margin-left:5px}.color-swatch__value:after{content:"";position:absolute;top:-5px;left:-9px;width:calc(100% + 18px);height:25px;background:var(--cs-gray-100);z-index:0;border-radius:20px;opacity:0;transition:opacity .1s linear}.color-swatch__value__text{position:relative;z-index:1}.color-swatch__copy-bubble{display:inline-flex;height:20px;background:var(--cs-color-body);color:#fff;text-transform:uppercase;font-size:9px;padding:3px 12px;border-radius:20px;justify-content:center;align-items:center;line-height:0;margin-left:15px;position:relative;box-shadow:var(--cs-box-shadow-shallow);opacity:0;z-index:1}.color-swatch__copy-bubble:after{position:absolute;right:calc(100% - 1px);content:"";width:0;height:0;border-style:solid;border-width:4px 6.9px 4px 0;border-color:transparent var(--cs-color-body) transparent transparent}.color-swatch__code{display:flex;position:relative}.color-swatch__type{font-weight:400;margin-right:5px;min-width:10px;opacity:.7}.color-swatch__color-stops{margin-left:10px}
 
         `;
 
@@ -687,8 +687,6 @@ GradientParser.stringify = (function() {
                 gradTypeEntry.querySelector('.color-swatch__value__text').innerText = gradType;
                 colorInfo.appendChild(gradTypeEntry);
 
-                console.log(gradType);
-
                 let grad = gradientObject[i];
 
                 if (grad.colorStops.length) {
@@ -704,9 +702,13 @@ GradientParser.stringify = (function() {
                     // gradStopEntry.querySelector('.color-swatch__value__text').innerText = colorStopValue;
                     colorInfo.appendChild(gradStopEntry);
 
+                    let shortStopLabelsThree = ['start', 'mid', 'end'];
+                    let shortStopLabelsTwo = ['start', 'end'];
+                    
                     for (let i = 0, len = grad.colorStops.length; i < len; ++i) {
                         let stop = grad.colorStops[i];
-                        
+                        let stopLabels = (len === 3) ? shortStopLabelsThree[i] + ':' : (len === 2) ? shortStopLabelsTwo[i] + ':' : (i + 1) + '.' ;
+
                         let colorFull = '';
                         if (stop.type === 'rgb') {
                             colorFull = rgbaToHex(`rgb(${stop.value})`);
@@ -728,7 +730,7 @@ GradientParser.stringify = (function() {
                         const colorStopValue = `${colorFull}${stopFull}`;
                         const gradColorStopEntry = htmlToElement(emptyEntryEl);
     
-                        gradColorStopEntry.querySelector('.color-swatch__type').innerText = (i + 1) + '.';
+                        gradColorStopEntry.querySelector('.color-swatch__type').innerText = stopLabels;
                         gradColorStopEntry.querySelector('.color-swatch__value__text').innerText = colorStopValue;
                         colorInfo.querySelector('.color-swatch__color-stops__entries').appendChild(gradColorStopEntry);
                     }

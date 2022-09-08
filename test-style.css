@@ -7,8 +7,8 @@
     --color-450: yellow;
     --color-primary: #ff0000;
     --color-600: teal;
-    --color-gradient: linear-gradient(45deg, #0000ff 0%, rgba(8,27,64,1) 100%);
-    --color-gradient-radial: radial-gradient(circle at 100%, #000, #333 50%, #333 75%);
+    --test-gradient: linear-gradient(45deg, #0000ff 0%, rgba(8,27,64,1) 100%);
+    --test-gradient-radial-extra-long-name: radial-gradient(circle at 100%, #000, #333 50%, #333 75%);
     --violet-gradient: linear-gradient(var(--gradient-angle), #00FFFF -22.11%, #2B38C2 50.21%, #90278E 119.57%);
 }
 

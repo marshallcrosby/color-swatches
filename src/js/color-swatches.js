@@ -171,8 +171,6 @@
                 gradTypeEntry.querySelector('.color-swatch__value__text').innerText = gradType;
                 colorInfo.appendChild(gradTypeEntry);
 
-                console.log(gradType);
-
                 let grad = gradientObject[i];
 
                 if (grad.colorStops.length) {
@@ -188,9 +186,13 @@
                     // gradStopEntry.querySelector('.color-swatch__value__text').innerText = colorStopValue;
                     colorInfo.appendChild(gradStopEntry);
 
+                    let shortStopLabelsThree = ['start', 'mid', 'end'];
+                    let shortStopLabelsTwo = ['start', 'end'];
+                    
                     for (let i = 0, len = grad.colorStops.length; i < len; ++i) {
                         let stop = grad.colorStops[i];
-                        
+                        let stopLabels = (len === 3) ? shortStopLabelsThree[i] + ':' : (len === 2) ? shortStopLabelsTwo[i] + ':' : (i + 1) + '.' ;
+
                         let colorFull = '';
                         if (stop.type === 'rgb') {
                             colorFull = rgbaToHex(`rgb(${stop.value})`);
@@ -212,7 +214,7 @@
                         const colorStopValue = `${colorFull}${stopFull}`;
                         const gradColorStopEntry = htmlToElement(emptyEntryEl);
     
-                        gradColorStopEntry.querySelector('.color-swatch__type').innerText = (i + 1) + '.';
+                        gradColorStopEntry.querySelector('.color-swatch__type').innerText = stopLabels;
                         gradColorStopEntry.querySelector('.color-swatch__value__text').innerText = colorStopValue;
                         colorInfo.querySelector('.color-swatch__color-stops__entries').appendChild(gradColorStopEntry);
                     }
