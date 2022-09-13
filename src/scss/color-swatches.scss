@@ -67,6 +67,7 @@
     &:hover {
         overflow: visible;
         mask-image: none;
+        z-index: 2;
 
         .color-swatch__value {
             // text-decoration: underline;
