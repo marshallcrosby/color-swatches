@@ -1,5 +1,5 @@
 /*!
-    * Color Swatches v1.2.2
+    * Color Swatches v1.2.3
     * Plugin that makes it easy to render color swatches.
     *
     * Copyright 2021-2022 Marshall Crosby
